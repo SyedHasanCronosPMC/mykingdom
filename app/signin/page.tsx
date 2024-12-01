@@ -13,10 +13,14 @@ export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Add your sign in logic here
-  };
+    const formData = {
+      email,
+      password
+    };
+    // Use formData object for your API calls
+  }
 
   return (
     <div className="min-h-screen bg-[#2563EB] flex items-center justify-center p-4">
@@ -48,8 +52,7 @@ export default function SignInPage() {
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full"
-                required
+                className="border-[#E5E7EB] focus:border-[#2563EB]"
               />
             </div>
             <div className="space-y-2">
@@ -118,7 +121,7 @@ export default function SignInPage() {
             </div>
 
             <p className="text-center text-sm text-gray-600">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/signup" className="text-[#2563EB] hover:underline">
                 Sign up
               </Link>

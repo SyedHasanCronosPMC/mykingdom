@@ -1,5 +1,4 @@
-import { Button } from "@/mykingdom/components/ui/button";
-import { ButtonProps } from "@/mykingdom/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 interface SSOButtonProps {
   provider: string;

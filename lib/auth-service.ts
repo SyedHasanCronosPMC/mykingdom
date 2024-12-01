@@ -3,7 +3,7 @@ import { SignupData, UserCredentials, ResetPasswordData } from '@/types/auth';
 interface AuthResponse {
   success: boolean;
   message: string;
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 export const authService = {

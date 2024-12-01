@@ -20,14 +20,22 @@ export const AuthForm = ({ mode, onSubmit }: AuthFormProps) => {
     onSubmit({ email, password, confirmPassword })
   }
 
+  const handleSocialLogin = (provider: string) => {
+    window.location.href = `/api/auth/sso/${provider}`
+  }
+
   return (
     <div className="w-full max-w-md p-8 mx-auto bg-white rounded-lg shadow-sm">
-      <h1 className="mb-2 text-2xl font-semibold text-center text-gray-800">
-        Welcome to MyKingdom
-      </h1>
-      <p className="mb-6 text-sm text-center text-blue-600">
-        {mode === 'signin' ? 'Sign in to your account' : 'Create your account'}
-      </p>
+      <div className="flex flex-col space-y-2 text-center">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          {mode === 'signin' ? 'Welcome back' : 'Create an account'}
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          {mode === 'signin' 
+            ? 'Enter your email to sign in to your account'
+            : 'Enter your email below to create your account'}
+        </p>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -42,6 +50,7 @@ export const AuthForm = ({ mode, onSubmit }: AuthFormProps) => {
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="name@example.com"
             required
+            aria-label="Email address"
           />
         </div>
 
@@ -56,6 +65,7 @@ export const AuthForm = ({ mode, onSubmit }: AuthFormProps) => {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
+            aria-label="Password"
           />
         </div>
 
@@ -71,6 +81,7 @@ export const AuthForm = ({ mode, onSubmit }: AuthFormProps) => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
+              aria-label="Confirm password"
             />
           </div>
         )}
@@ -81,7 +92,11 @@ export const AuthForm = ({ mode, onSubmit }: AuthFormProps) => {
       </form>
 
       {mode === 'signin' && (
-        <Link href="/auth/forgot-password" className="block mt-4 text-sm text-center text-blue-600 hover:underline">
+        <Link 
+          href="/auth/forgot-password" 
+          className="block mt-4 text-sm text-center text-blue-600 hover:underline"
+          tabIndex={0}
+        >
           Forgot password?
         </Link>
       )}
@@ -96,44 +111,43 @@ export const AuthForm = ({ mode, onSubmit }: AuthFormProps) => {
       </div>
 
       <div className="grid gap-3 mt-6">
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => window.location.href = '/api/auth/sso/google'}
-        >
-          <Icons.google className="w-5 h-5 mr-2" />
-          Sign in with Google
-        </Button>
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => window.location.href = '/api/auth/sso/facebook'}
-        >
-          <Icons.facebook className="w-5 h-5 mr-2" />
-          Sign in with Facebook
-        </Button>
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => window.location.href = '/api/auth/sso/linkedin'}
-        >
-          <Icons.linkedin className="w-5 h-5 mr-2" />
-          Sign in with LinkedIn
-        </Button>
+        {['google', 'facebook', 'linkedin'].map((provider) => {
+          const IconComponent = Icons[provider as keyof typeof Icons];
+          return (
+            <Button
+              key={provider}
+              variant="outline"
+              className="w-full"
+              onClick={() => handleSocialLogin(provider)}
+              aria-label={`Sign in with ${provider}`}
+            >
+              <IconComponent className="w-5 h-5 mr-2" />
+              Sign in with {provider.charAt(0).toUpperCase() + provider.slice(1)}
+            </Button>
+          );
+        })}
       </div>
 
       <p className="mt-6 text-sm text-center text-gray-600">
         {mode === 'signin' ? (
           <>
-            Don't have an account?{' '}
-            <Link href="/auth/signup" className="text-blue-600 hover:underline">
+            Don&apos;t have an account?{' '}
+            <Link 
+              href="/auth/signup" 
+              className="text-blue-600 hover:underline"
+              tabIndex={0}
+            >
               Sign up
             </Link>
           </>
         ) : (
           <>
             Already have an account?{' '}
-            <Link href="/auth/signin" className="text-blue-600 hover:underline">
+            <Link 
+              href="/auth/signin" 
+              className="text-blue-600 hover:underline"
+              tabIndex={0}
+            >
               Sign in
             </Link>
           </>

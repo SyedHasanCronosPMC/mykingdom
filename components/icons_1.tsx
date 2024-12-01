@@ -1,8 +1,9 @@
-import { Facebook, Linkedin, Loader2, Mail } from 'lucide-react'
+import * as React from 'react'
+import { FacebookIcon, Linkedin, Loader2 } from 'lucide-react'
 
-export const Icons = {
+export const icons_1 = {
   spinner: Loader2,
-  google: (props: any) => (
+  google: (props: React.ComponentProps<'svg'>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
       <path
         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -22,7 +23,7 @@ export const Icons = {
       />
     </svg>
   ),
-  facebook: Facebook,
+  facebook: FacebookIcon,
   linkedin: Linkedin,
-  mail: Mail,
-} 
+} as const
+

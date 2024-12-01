@@ -1,215 +1,145 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Icons } from "@/components/icons"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useState } from 'react'
+import { Button } from './ui/button'
+import { Icons } from './icons'
+import Link from 'next/link'
 
-interface FormData {
-  email: string
-  password: string
-  confirmPassword?: string
+interface AuthFormProps {
+  mode: 'signin' | 'signup'
+  onSubmit: (data: { email: string; password: string; confirmPassword?: string }) => void
 }
 
-interface FormErrors {
-  email?: string
-  password?: string
-  confirmPassword?: string
-}
+export const AuthForm = ({ mode, onSubmit }: AuthFormProps) => {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
 
-export default function AuthForm() {
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [formData, setFormData] = useState<FormData>({
-    email: "",
-    password: "",
-    confirmPassword: "",
-  })
-  const [errors, setErrors] = useState<FormErrors>({})
-
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {}
-
-    if (!formData.email) {
-      newErrors.email = "Email is required"
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email"
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required"
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password"
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match"
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-    if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }))
-    }
-  }
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (!validateForm()) return
-
-    setIsLoading(true)
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      console.log("Form submitted:", formData)
-    } catch (error) {
-      console.error("Error:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleSocialLogin = (provider: string) => {
-    console.log(`${provider} login initiated`)
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    onSubmit({ email, password, confirmPassword })
   }
 
   return (
-    <Card className="w-full max-w-md bg-white shadow-lg">
-      <CardHeader className="space-y-1">
-        <h2 className="text-2xl font-semibold text-center text-[#1a237e]">
-          Welcome to MyKingdom
-        </h2>
-        <p className="text-sm text-center text-[#3949ab]">
-          Create your account
-        </p>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="name@example.com"
-              disabled={isLoading}
-              value={formData.email}
-              onChange={handleChange}
-              className="bg-white border-[#e0e0e0]"
-              aria-describedby={errors.email ? "email-error" : undefined}
-            />
-            {errors.email && (
-              <p id="email-error" className="text-sm text-red-500">{errors.email}</p>
-            )}
-          </div>
+    <div className="w-full max-w-md p-8 mx-auto bg-white rounded-lg shadow-sm">
+      <h1 className="mb-2 text-2xl font-semibold text-center text-gray-800">
+        Welcome to MyKingdom
+      </h1>
+      <p className="mb-6 text-sm text-center text-blue-600">
+        {mode === 'signin' ? 'Sign in to your account' : 'Create your account'}
+      </p>
 
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="email" className="block mb-1 text-sm text-gray-600">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="name@example.com"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="password" className="block mb-1 text-sm text-gray-600">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        {mode === 'signup' && (
+          <div>
+            <label htmlFor="confirmPassword" className="block mb-1 text-sm text-gray-600">
+              Confirm Password
+            </label>
+            <input
               type="password"
-              disabled={isLoading}
-              value={formData.password}
-              onChange={handleChange}
-              className="bg-white border-[#e0e0e0]"
-              aria-describedby={errors.password ? "password-error" : undefined}
-            />
-            {errors.password && (
-              <p id="password-error" className="text-sm text-red-500">{errors.password}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
-            <Input
               id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              disabled={isLoading}
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="bg-white border-[#e0e0e0]"
-              aria-describedby={errors.confirmPassword ? "confirm-password-error" : undefined}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
             />
-            {errors.confirmPassword && (
-              <p id="confirm-password-error" className="text-sm text-red-500">{errors.confirmPassword}</p>
-            )}
           </div>
+        )}
 
-          <Button 
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-[#304ffe] hover:bg-[#1a237e] text-white"
-          >
-            {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Sign Up
-          </Button>
-        </form>
+        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+          {mode === 'signin' ? 'Sign In' : 'Sign Up'}
+        </Button>
+      </form>
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-[#e0e0e0]" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-[#3949ab]">
-              Or continue with
-            </span>
-          </div>
+      {mode === 'signin' && (
+        <Link href="/auth/forgot-password" className="block mt-4 text-sm text-center text-blue-600 hover:underline">
+          Forgot password?
+        </Link>
+      )}
+
+      <div className="relative mt-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300" />
         </div>
-
-        <div className="grid gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => handleSocialLogin('Google')}
-            className="w-full border-[#e0e0e0] hover:bg-[#f5f5f5] text-[#1a237e]"
-          >
-            <Icons.google className="h-5 w-5 mr-2" />
-            Sign in with Google
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => handleSocialLogin('Facebook')}
-            className="w-full border-[#e0e0e0] hover:bg-[#f5f5f5] text-[#1a237e]"
-          >
-            <Icons.facebook className="h-5 w-5 mr-2" />
-            Sign in with Facebook
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => handleSocialLogin('LinkedIn')}
-            className="w-full border-[#e0e0e0] hover:bg-[#f5f5f5] text-[#1a237e]"
-          >
-            <Icons.linkedin className="h-5 w-5 mr-2" />
-            Sign in with LinkedIn
-          </Button>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 text-gray-500 bg-white">OR CONTINUE WITH</span>
         </div>
-      </CardContent>
-      <CardFooter>
-        <p className="text-sm text-center text-[#3949ab] w-full">
-          Already have an account?{" "}
-          <Button 
-            type="button"
-            variant="link" 
-            className="p-0 text-[#1a237e] font-semibold"
-            onClick={() => console.log("Navigate to sign in")}
-          >
-            Sign in
-          </Button>
-        </p>
-      </CardFooter>
-    </Card>
+      </div>
+
+      <div className="grid gap-3 mt-6">
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => window.location.href = '/api/auth/sso/google'}
+        >
+          <Icons.google className="w-5 h-5 mr-2" />
+          Sign in with Google
+        </Button>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => window.location.href = '/api/auth/sso/facebook'}
+        >
+          <Icons.facebook className="w-5 h-5 mr-2" />
+          Sign in with Facebook
+        </Button>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => window.location.href = '/api/auth/sso/linkedin'}
+        >
+          <Icons.linkedin className="w-5 h-5 mr-2" />
+          Sign in with LinkedIn
+        </Button>
+      </div>
+
+      <p className="mt-6 text-sm text-center text-gray-600">
+        {mode === 'signin' ? (
+          <>
+            Don't have an account?{' '}
+            <Link href="/auth/signup" className="text-blue-600 hover:underline">
+              Sign up
+            </Link>
+          </>
+        ) : (
+          <>
+            Already have an account?{' '}
+            <Link href="/auth/signin" className="text-blue-600 hover:underline">
+              Sign in
+            </Link>
+          </>
+        )}
+      </p>
+    </div>
   )
 }
 

@@ -1,9 +1,5 @@
-import AuthForm from "@/components/AuthForm"
+import { redirect } from 'next/navigation';
 
 export default function Home() {
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-[#304ffe] p-4">
-      <AuthForm />
-    </main>
-  )
+  redirect('/auth/signin');
 }
